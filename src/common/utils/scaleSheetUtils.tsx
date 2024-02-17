@@ -6,7 +6,7 @@ const baseWidth = isTablet ? 662 : 375;
 const baseHeight = isTablet ? 970 : 667;
 // adjust scalesize
 
-export const scalesize = (size: number): number => {
+export const scaleSize = (size: number): number => {
   const scaleWidth = (screenWidth / baseWidth) * size;
   return scaleWidth < 1 ? scaleWidth : Math.round(scaleWidth);
 };
