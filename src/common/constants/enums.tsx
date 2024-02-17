@@ -21,3 +21,10 @@ export enum BorderType {
   SOLID = 2,
   DASHED = 3,
 }
+
+// Render Image source Type
+
+export enum ImageSourceType {
+  URL = 'Url',
+  LOCAL = 'Local',
+}

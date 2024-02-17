@@ -6,11 +6,14 @@ import {
   ImageSourcePropType,
   ImageStyle,
   TextStyle,
+  TouchableOpacity,
 } from 'react-native';
 import React, {ReactElement} from 'react';
-import {BorderType} from '../../constants/enums';
+import {BorderStyle, BorderType} from '../../constants/enums';
 import {useTheme} from '@react-navigation/native';
 import buttonStyles from './buttonStyles';
+import textStyles from '../customText/textStyles';
+import {imageStyles} from '../customImage/imageStyle';
 
 interface Props {
   onPress?: ((_event: GestureResponderEvent) => void) | undefined;
@@ -86,11 +89,23 @@ const CustomButton = (props: typeof defaultProps): ReactElement => {
     isSkipButton,
     isCompleteRadiusButton,
   );
-  return (
-    <View>
-      <Text>index</Text>
-    </View>
-  );
+
+  const textStyle = textStyles(theme.colors);
+  const iamgeStyle = imageStyles(theme?.colors);
+
+  const getBorderStyle = (): BorderStyle => {
+    if (borderType === BorderType.DOTTED) {
+      return BorderStyle.DOTTED;
+    }
+
+    if (borderType === BorderType.DASHED) {
+      return BorderStyle.DASHED;
+    }
+
+    return BorderStyle.SOLID;
+  };
+
+  return <TouchableOpacity disabled={shouldDisable}></TouchableOpacity>;
 };
 
 export default CustomButton;
