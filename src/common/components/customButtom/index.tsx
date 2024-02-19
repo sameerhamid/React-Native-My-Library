@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   GestureResponderEvent,
   ViewStyle,
   ImageSourcePropType,
@@ -11,9 +10,15 @@ import {
 import React, {ReactElement} from 'react';
 import {BorderStyle, BorderType} from '../../constants/enums';
 import {useTheme} from '@react-navigation/native';
-import buttonStyles from './buttonStyles';
+
 import textStyles from '../customText/textStyles';
 import {imageStyles} from '../customImage/imageStyle';
+import {buttonStyles} from './buttonStyles';
+import CustomImage from '../customImage';
+import CustomText from '../customText';
+import {WithDebounce} from '../../utils/debounceUtil';
+import Colors from '../../styles/colors';
+import {ThemeModelItem} from '../../model/theme/themeModel';
 
 interface Props {
   onPress?: ((_event: GestureResponderEvent) => void) | undefined;
@@ -83,7 +88,7 @@ const CustomButton = (props: typeof defaultProps): ReactElement => {
     showIcon,
     isBigText,
   } = props;
-  const theme = useTheme();
+  const theme: ThemeModelItem = useTheme();
   const buttonStyle = buttonStyles(
     theme.colors,
     isSkipButton,
@@ -91,7 +96,7 @@ const CustomButton = (props: typeof defaultProps): ReactElement => {
   );
 
   const textStyle = textStyles(theme.colors);
-  const iamgeStyle = imageStyles(theme?.colors);
+  const imageStyle = imageStyles(theme?.colors);
 
   const getBorderStyle = (): BorderStyle => {
     if (borderType === BorderType.DOTTED) {
@@ -105,7 +110,68 @@ const CustomButton = (props: typeof defaultProps): ReactElement => {
     return BorderStyle.SOLID;
   };
 
-  return <TouchableOpacity disabled={shouldDisable}></TouchableOpacity>;
+  return (
+    <TouchableOpacity
+      disabled={shouldDisable}
+      //@ts-ignore
+      onPress={WithDebounce(() => {
+        //@ts-ignore
+        onPress?.();
+      })}
+      style={{
+        ...buttonStyle.btnView,
+        ...(hideBackground && {backgroundColor: Colors.grayBackground}),
+        ...(!!borderType && {
+          borderWidth: 1,
+          borderStyle: getBorderStyle(),
+        }),
+        ...(!!borderColor && {
+          borderWidth: 1,
+          borderColor,
+        }),
+        ...(!!borderRadius && {
+          borderWidth: 0,
+          borderRadius,
+        }),
+        ...(shouldDisable && !shouldPreventDisabledStyle
+          ? buttonStyle.disabledBtnView
+          : {}),
+        ...(btnStyle ?? {}),
+      }}>
+      {leftImage && (
+        <CustomImage
+          source={leftImage}
+          imageStyle={{...imageStyle.margin, ...buttonImageStyle}}
+        />
+      )}
+      <View style={{flex: rightImage || (isSkipButton && showIcon) ? 1 : 0}} />
+      <CustomText
+        text={title}
+        txtSize={textSize}
+        txtStyle={{
+          ...(isSkipButton
+            ? {...textStyle.purple_Bold18}
+            : {...textStyle?.white_Bold18}),
+          ...(buttonTextStyle ?? {}),
+          ...(shouldDisable && !shouldPreventDisabledStyle
+            ? isBigText
+              ? {...textStyle.white_Bold18}
+              : {...textStyle.white_Sans12}
+            : {}),
+        }}
+      />
+
+      {(rightImage || (isSkipButton && showIcon)) && (
+        <View style={{flex: 1, alignItems: 'flex-end'}}>
+          <CustomImage
+            tintColor={rightImageTintColor || theme?.colors.purpleButtonTheme}
+            source={rightImage}
+            imageStyle={{...imageStyle.margin, ...buttonImageStyle}}
+          />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
 };
 
 export default CustomButton;
