@@ -33,7 +33,7 @@ const CustomText = (props: typeof defaultProps): React.ReactElement | null => {
         txtStyle ?? {},
         txtSize ? {fontSize: txtSize} : {},
       ]}>
-      {t(text ?? '')}
+      {text ?? ''}
     </Text>
   );
 };
